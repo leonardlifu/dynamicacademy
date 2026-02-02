@@ -3,6 +3,16 @@ import { supabase } from '@/integrations/supabase/client';
 import { useAuth } from '@/contexts/AuthContext';
 import { toast } from 'sonner';
 
+interface EnrollmentResponse {
+  success?: boolean;
+  enrollment?: unknown;
+  message?: string;
+  error?: string;
+  requiresPayment?: boolean;
+  price?: number;
+  courseTitle?: string;
+}
+
 export const useEnrollments = () => {
   const { user } = useAuth();
   const queryClient = useQueryClient();
@@ -27,24 +37,39 @@ export const useEnrollments = () => {
   });
 
   const enrollMutation = useMutation({
-    mutationFn: async (courseId: string) => {
+    mutationFn: async (courseId: string): Promise<EnrollmentResponse> => {
       if (!user) throw new Error('Must be logged in to enroll');
       
-      const { data, error } = await supabase
-        .from('enrollments')
-        .insert({
-          user_id: user.id,
-          course_id: courseId,
-        })
-        .select()
-        .single();
+      // Use edge function for secure enrollment (handles both free and paid)
+      const { data: { session } } = await supabase.auth.getSession();
       
-      if (error) throw error;
-      return data;
+      const response = await supabase.functions.invoke('enroll-in-course', {
+        body: { courseId },
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`,
+        },
+      });
+      
+      if (response.error) {
+        throw new Error(response.error.message || 'Failed to enroll');
+      }
+      
+      const result = response.data as EnrollmentResponse;
+      
+      // Handle payment required response
+      if (result.requiresPayment) {
+        throw new Error(`Payment of $${result.price} required for ${result.courseTitle}. Payment integration coming soon!`);
+      }
+      
+      if (result.error) {
+        throw new Error(result.error);
+      }
+      
+      return result;
     },
-    onSuccess: () => {
+    onSuccess: (data) => {
       queryClient.invalidateQueries({ queryKey: ['enrollments'] });
-      toast.success('Successfully enrolled in course!');
+      toast.success(data.message || 'Successfully enrolled in course!');
     },
     onError: (error: Error) => {
       toast.error(error.message || 'Failed to enroll');
