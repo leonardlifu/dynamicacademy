@@ -456,12 +456,84 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      profiles_public: {
+        Row: {
+          avatar_url: string | null
+          bio: string | null
+          created_at: string | null
+          full_name: string | null
+          id: string | null
+          user_id: string | null
+        }
+        Insert: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string | null
+          user_id?: string | null
+        }
+        Update: {
+          avatar_url?: string | null
+          bio?: string | null
+          created_at?: string | null
+          full_name?: string | null
+          id?: string | null
+          user_id?: string | null
+        }
+        Relationships: []
+      }
+      quiz_questions_safe: {
+        Row: {
+          created_at: string | null
+          explanation: string | null
+          id: string | null
+          options: Json | null
+          order_index: number | null
+          question: string | null
+          quiz_id: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          explanation?: string | null
+          id?: string | null
+          options?: Json | null
+          order_index?: number | null
+          question?: string | null
+          quiz_id?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          explanation?: string | null
+          id?: string | null
+          options?: Json | null
+          order_index?: number | null
+          question?: string | null
+          quiz_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "quiz_questions_quiz_id_fkey"
+            columns: ["quiz_id"]
+            isOneToOne: false
+            referencedRelation: "quizzes"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
+      }
+      grade_quiz_attempt: {
+        Args: { p_answers: Json; p_quiz_id: string }
+        Returns: {
+          passed: boolean
+          score: number
+          total_questions: number
+        }[]
       }
       has_role: {
         Args: {
