@@ -15,20 +15,19 @@ export default {
   	extend: {
   		fontFamily: {
   			sans: [
-  				'Montserrat',
+  				'Roboto',
   				'ui-sans-serif',
   				'system-ui',
   				'-apple-system',
   				'BlinkMacSystemFont',
   				'Segoe UI',
-  				'Roboto',
   				'Helvetica Neue',
   				'Arial',
   				'Noto Sans',
   				'sans-serif'
   			],
   			mono: [
-  				'IBM Plex Mono',
+  				'Roboto Mono',
   				'ui-monospace',
   				'SFMono-Regular',
   				'Menlo',
@@ -39,7 +38,7 @@ export default {
   				'monospace'
   			],
   			serif: [
-  				'Cormorant Garamond',
+  				'Libre Caslon Text',
   				'ui-serif',
   				'Georgia',
   				'Cambria',
@@ -174,7 +173,7 @@ export default {
   					transform: 'scale(1)'
   				}
   			},
-  			'float': {
+  			float: {
   				'0%, 100%': {
   					transform: 'translateY(0)'
   				},
@@ -197,7 +196,7 @@ export default {
   			'fade-in': 'fade-in 0.5s ease-out forwards',
   			'slide-up': 'slide-up 0.5s ease-out forwards',
   			'scale-in': 'scale-in 0.3s ease-out forwards',
-  			'float': 'float 6s ease-in-out infinite',
+  			float: 'float 6s ease-in-out infinite',
   			'pulse-glow': 'pulse-glow 3s ease-in-out infinite'
   		}
   	}
