@@ -18,6 +18,8 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Learn from "./pages/Learn";
+import Certificate from "./pages/Certificate";
+import MyCertificates from "./pages/MyCertificates";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -52,6 +54,12 @@ const App = () => (
             <Route path="/learn/:slug" element={
               <ProtectedRoute>
                 <Learn />
+              </ProtectedRoute>
+            } />
+            <Route path="/certificate/:certNumber" element={<Certificate />} />
+            <Route path="/certificates" element={
+              <ProtectedRoute>
+                <MyCertificates />
               </ProtectedRoute>
             } />
             <Route path="*" element={<NotFound />} />

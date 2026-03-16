@@ -14,6 +14,7 @@ import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
 import { toast } from 'sonner';
+import { useCertificates } from '@/hooks/useCertificates';
 
 const Learn = () => {
   const { slug } = useParams<{ slug: string }>();
@@ -24,6 +25,7 @@ const Learn = () => {
   const { data: course, isLoading: courseLoading } = useCourse(slug || '');
   const { data: modules } = useCourseModules(course?.id || '');
   const { isEnrolled } = useEnrollments();
+  const { generateCertificate } = useCertificates();
 
   const [currentLessonId, setCurrentLessonId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
@@ -85,10 +87,21 @@ const Learn = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (_, lessonId) => {
       queryClient.invalidateQueries({ queryKey: ['lesson-progress'] });
       queryClient.invalidateQueries({ queryKey: ['enrollments'] });
       toast.success('Lesson completed!');
+      
+      // Check if all lessons are now complete → issue certificate
+      if (allLessons && course) {
+        const nowCompleted = new Set(
+          (lessonProgress || []).filter(p => p.is_completed).map(p => p.lesson_id)
+        );
+        nowCompleted.add(lessonId);
+        if (allLessons.every(l => nowCompleted.has(l.id))) {
+          generateCertificate(course.id);
+        }
+      }
     },
   });
 

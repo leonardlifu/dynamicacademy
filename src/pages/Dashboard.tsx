@@ -11,6 +11,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { useEnrollments } from '@/hooks/useEnrollments';
 import { useAnnouncements } from '@/hooks/useAnnouncements';
+import { useCertificates } from '@/hooks/useCertificates';
 import { signOut } from '@/lib/supabase';
 import { toast } from 'sonner';
 
@@ -18,6 +19,7 @@ const Dashboard = () => {
   const { user, profile } = useAuth();
   const { enrollments, isLoading } = useEnrollments();
   const { data: announcements } = useAnnouncements();
+  const { certificates } = useCertificates();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
@@ -101,8 +103,8 @@ const Dashboard = () => {
                   <Trophy className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">0</p>
-                  <p className="text-muted-foreground text-sm">Certificates</p>
+                  <p className="text-2xl font-bold">{certificates?.length || 0}</p>
+                  <Link to="/certificates" className="text-muted-foreground text-sm hover:text-primary transition-colors">Certificates</Link>
                 </div>
               </div>
             </div>
