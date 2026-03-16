@@ -18,6 +18,8 @@ import Signup from "./pages/Signup";
 import Dashboard from "./pages/Dashboard";
 import AdminDashboard from "./pages/AdminDashboard";
 import Learn from "./pages/Learn";
+import Certificate from "./pages/Certificate";
+import MyCertificates from "./pages/MyCertificates";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
