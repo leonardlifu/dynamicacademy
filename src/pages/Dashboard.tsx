@@ -19,6 +19,7 @@ const Dashboard = () => {
   const { user, profile } = useAuth();
   const { enrollments, isLoading } = useEnrollments();
   const { data: announcements } = useAnnouncements();
+  const { certificates } = useCertificates();
   const navigate = useNavigate();
 
   const handleSignOut = async () => {
