@@ -11,6 +11,7 @@ import {
 import { useAuth } from '@/contexts/AuthContext';
 import { useEnrollments } from '@/hooks/useEnrollments';
 import { useAnnouncements } from '@/hooks/useAnnouncements';
+import { useCertificates } from '@/hooks/useCertificates';
 import { signOut } from '@/lib/supabase';
 import { toast } from 'sonner';
 
