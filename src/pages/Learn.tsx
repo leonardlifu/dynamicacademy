@@ -87,10 +87,21 @@ const Learn = () => {
       if (error) throw error;
       return data;
     },
-    onSuccess: () => {
+    onSuccess: (_, lessonId) => {
       queryClient.invalidateQueries({ queryKey: ['lesson-progress'] });
       queryClient.invalidateQueries({ queryKey: ['enrollments'] });
       toast.success('Lesson completed!');
+      
+      // Check if all lessons are now complete → issue certificate
+      if (allLessons && course) {
+        const nowCompleted = new Set(
+          (lessonProgress || []).filter(p => p.is_completed).map(p => p.lesson_id)
+        );
+        nowCompleted.add(lessonId);
+        if (allLessons.every(l => nowCompleted.has(l.id))) {
+          generateCertificate(course.id);
+        }
+      }
     },
   });
 
