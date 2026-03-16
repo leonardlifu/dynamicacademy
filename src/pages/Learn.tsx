@@ -25,6 +25,7 @@ const Learn = () => {
   const { data: course, isLoading: courseLoading } = useCourse(slug || '');
   const { data: modules } = useCourseModules(course?.id || '');
   const { isEnrolled } = useEnrollments();
+  const { generateCertificate } = useCertificates();
 
   const [currentLessonId, setCurrentLessonId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
