@@ -103,8 +103,8 @@ const Dashboard = () => {
                   <Trophy className="w-6 h-6" />
                 </div>
                 <div>
-                  <p className="text-2xl font-bold">0</p>
-                  <p className="text-muted-foreground text-sm">Certificates</p>
+                  <p className="text-2xl font-bold">{certificates?.length || 0}</p>
+                  <Link to="/certificates" className="text-muted-foreground text-sm hover:text-primary transition-colors">Certificates</Link>
                 </div>
               </div>
             </div>

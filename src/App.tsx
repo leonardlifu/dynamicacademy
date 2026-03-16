@@ -56,6 +56,12 @@ const App = () => (
                 <Learn />
               </ProtectedRoute>
             } />
+            <Route path="/certificate/:certNumber" element={<Certificate />} />
+            <Route path="/certificates" element={
+              <ProtectedRoute>
+                <MyCertificates />
+              </ProtectedRoute>
+            } />
             <Route path="*" element={<NotFound />} />
           </Routes>
         </BrowserRouter>
