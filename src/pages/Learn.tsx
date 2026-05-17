@@ -13,6 +13,8 @@ import { useEnrollments } from '@/hooks/useEnrollments';
 import { useAuth } from '@/contexts/AuthContext';
 import { supabase } from '@/integrations/supabase/client';
 import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { toast } from 'sonner';
 import { useCertificates } from '@/hooks/useCertificates';
 
@@ -261,12 +263,12 @@ const Learn = () => {
                   </div>
                 </div>
 
-                <div className="bg-card rounded-2xl border shadow-card p-8 mb-8">
-                  <div className="prose prose-slate dark:prose-invert max-w-none">
-                    {currentLesson.content?.split('\n').map((paragraph, i) => (
-                      <p key={i}>{paragraph}</p>
-                    ))}
-                  </div>
+                <div className="bg-card rounded-2xl border shadow-card p-6 md:p-8 mb-8">
+                  <article className="prose prose-slate dark:prose-invert max-w-none prose-headings:scroll-mt-24 prose-pre:bg-muted prose-pre:text-foreground prose-code:text-primary">
+                    <ReactMarkdown remarkPlugins={[remarkGfm]}>
+                      {currentLesson.content || '_No notes available for this lesson yet._'}
+                    </ReactMarkdown>
+                  </article>
                 </div>
 
                 {/* Navigation */}
