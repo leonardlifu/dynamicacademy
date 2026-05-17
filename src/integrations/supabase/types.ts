@@ -14,21 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      _lesson_notes_seed: {
-        Row: {
-          content: string
-          lesson_id: string
-        }
-        Insert: {
-          content: string
-          lesson_id: string
-        }
-        Update: {
-          content?: string
-          lesson_id?: string
-        }
-        Relationships: []
-      }
       announcements: {
         Row: {
           content: string
