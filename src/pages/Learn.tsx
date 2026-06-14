@@ -32,6 +32,7 @@ const Learn = () => {
 
   const [currentLessonId, setCurrentLessonId] = useState<string | null>(null);
   const [sidebarOpen, setSidebarOpen] = useState(true);
+  const [quizPassedIds, setQuizPassedIds] = useState<Set<string>>(new Set());
 
   // Fetch all lessons for the course
   const { data: allLessons } = useQuery({
