@@ -17,6 +17,7 @@ import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { toast } from 'sonner';
 import { useCertificates } from '@/hooks/useCertificates';
+import { LessonQuiz } from '@/components/learn/LessonQuiz';
 
 const Learn = () => {
   const { slug } = useParams<{ slug: string }>();
