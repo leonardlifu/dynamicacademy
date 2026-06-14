@@ -273,8 +273,20 @@ const Learn = () => {
                   </article>
                 </div>
 
+                <LessonQuiz
+                  lessonId={currentLesson.id}
+                  onPassed={() => setQuizPassedIds((prev) => {
+                    if (prev.has(currentLesson.id)) return prev;
+                    const n = new Set(prev); n.add(currentLesson.id); return n;
+                  })}
+                />
+
                 {/* Navigation */}
-                <div className="flex items-center justify-between">
+                {(() => {
+                  const quizOk = quizPassedIds.has(currentLesson.id);
+                  const canAdvance = quizOk;
+                  return (
+                <div className="flex items-center justify-between flex-wrap gap-3">
                   <Button
                     variant="outline"
                     onClick={() => prevLesson && setCurrentLessonId(prevLesson.id)}
@@ -287,7 +299,8 @@ const Learn = () => {
                   <Button
                     variant={isLessonComplete(currentLesson.id) ? 'outline' : 'hero'}
                     onClick={() => markCompleteMutation.mutate(currentLesson.id)}
-                    disabled={markCompleteMutation.isPending}
+                    disabled={markCompleteMutation.isPending || !canAdvance}
+                    title={!canAdvance ? 'Pass the quiz to mark complete' : ''}
                   >
                     {isLessonComplete(currentLesson.id) ? (
                       <>
@@ -301,12 +314,15 @@ const Learn = () => {
 
                   <Button
                     onClick={() => nextLesson && setCurrentLessonId(nextLesson.id)}
-                    disabled={!nextLesson}
+                    disabled={!nextLesson || !canAdvance}
+                    title={!canAdvance ? 'Pass the quiz to continue' : ''}
                   >
                     Next
                     <ChevronRight className="w-4 h-4" />
                   </Button>
                 </div>
+                  );
+                })()}
               </motion.div>
             )}
           </div>
