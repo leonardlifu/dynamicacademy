@@ -285,6 +285,28 @@ const Learn = () => {
                   </article>
                 </div>
 
+                {(() => {
+                  const res = (currentLesson.resources ?? {}) as {
+                    starter_code?: string;
+                    language?: string;
+                    hint?: string;
+                  };
+                  const language =
+                    (res.language as PlaygroundLanguage | undefined) ||
+                    COURSE_LANGUAGE[course.slug];
+                  if (!language) return null;
+                  return (
+                    <CodePlayground
+                      key={currentLesson.id}
+                      lessonId={currentLesson.id}
+                      language={language}
+                      starterCode={res.starter_code}
+                      hint={res.hint}
+                    />
+                  );
+                })()}
+
+
                 <LessonQuiz
                   lessonId={currentLesson.id}
                   onPassed={() => setQuizPassedIds((prev) => {
