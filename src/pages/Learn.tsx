@@ -18,6 +18,18 @@ import remarkGfm from 'remark-gfm';
 import { toast } from 'sonner';
 import { useCertificates } from '@/hooks/useCertificates';
 import { LessonQuiz } from '@/components/learn/LessonQuiz';
+import { CodePlayground } from '@/components/learn/CodePlayground';
+
+type PlaygroundLanguage = 'python' | 'javascript' | 'html';
+
+const COURSE_LANGUAGE: Record<string, PlaygroundLanguage> = {
+  'programming-foundations': 'javascript',
+  'python-for-beginners': 'python',
+  'web-development-essentials': 'html',
+  'machine-learning-essentials': 'python',
+  'data-analysis-with-python': 'python',
+};
+
 
 const Learn = () => {
   const { slug } = useParams<{ slug: string }>();
