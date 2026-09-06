@@ -1,6 +1,14 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import CodeMirror from '@uiw/react-codemirror';
+import { python } from '@codemirror/lang-python';
+import { javascript } from '@codemirror/lang-javascript';
+import { html as htmlLang } from '@codemirror/lang-html';
+import { oneDark } from '@codemirror/theme-one-dark';
 import { Button } from '@/components/ui/button';
-import { Play, RotateCcw, Terminal, Loader2 } from 'lucide-react';
+import { Play, RotateCcw, Terminal, Loader2, Save, Check, CloudOff } from 'lucide-react';
+import { supabase } from '@/integrations/supabase/client';
+import { useAuth } from '@/contexts/AuthContext';
+import { toast } from 'sonner';
 
 type Language = 'python' | 'javascript' | 'html';
 
@@ -26,6 +34,12 @@ const DEFAULTS: Record<Language, string> = {
   html: '<!-- Try it yourself -->\n<h1>Hello, Learner!</h1>\n<p>Edit this markup and press Run.</p>\n',
 };
 
+const extensionsFor = (language: Language) => {
+  if (language === 'python') return [python()];
+  if (language === 'javascript') return [javascript()];
+  return [htmlLang()];
+};
+
 const loadPyodideOnce = async (onStatus: (s: string) => void) => {
   if (window.__pyodide) return window.__pyodide;
   if (!window.loadPyodide) {
@@ -43,7 +57,10 @@ const loadPyodideOnce = async (onStatus: (s: string) => void) => {
   return window.__pyodide;
 };
 
+type SaveState = 'idle' | 'saving' | 'saved' | 'error';
+
 export const CodePlayground = ({ lessonId, language, starterCode, hint }: Props) => {
+  const { user } = useAuth();
   const initial = useMemo(
     () => (starterCode && starterCode.trim() ? starterCode : DEFAULTS[language]),
     [starterCode, language],
@@ -54,18 +71,86 @@ export const CodePlayground = ({ lessonId, language, starterCode, hint }: Props)
   const [output, setOutput] = useState('');
   const [running, setRunning] = useState(false);
   const [status, setStatus] = useState('');
+  const [saveState, setSaveState] = useState<SaveState>('idle');
+  const [loading, setLoading] = useState(true);
   const frameRef = useRef<HTMLIFrameElement>(null);
+  const dirtyRef = useRef(false);
 
+  // Load saved work from the student's account (falls back to local draft).
   useEffect(() => {
-    setCode(localStorage.getItem(storageKey) ?? initial);
+    let cancelled = false;
+    dirtyRef.current = false;
     setOutput('');
     setStatus('');
-  }, [storageKey, initial]);
+    setSaveState('idle');
+    setLoading(true);
 
+    const local = localStorage.getItem(storageKey);
+    setCode(local ?? initial);
+
+    if (!user) {
+      setLoading(false);
+      return () => { cancelled = true; };
+    }
+
+    (async () => {
+      const { data, error } = await supabase
+        .from('lesson_code')
+        .select('code')
+        .eq('user_id', user.id)
+        .eq('lesson_id', lessonId)
+        .maybeSingle();
+      if (cancelled) return;
+      if (!error && data?.code) setCode(data.code);
+      setLoading(false);
+    })();
+
+    return () => { cancelled = true; };
+  }, [storageKey, initial, lessonId, user]);
+
+  // Keep a local draft so work is never lost offline.
   useEffect(() => {
     const id = setTimeout(() => localStorage.setItem(storageKey, code), 400);
     return () => clearTimeout(id);
   }, [code, storageKey]);
+
+  const persist = useCallback(
+    async (value: string, silent = true) => {
+      if (!user) {
+        if (!silent) toast.error('Sign in to save your work to your account.');
+        return;
+      }
+      setSaveState('saving');
+      const { error } = await supabase
+        .from('lesson_code')
+        .upsert(
+          { user_id: user.id, lesson_id: lessonId, language, code: value },
+          { onConflict: 'user_id,lesson_id' },
+        );
+      if (error) {
+        setSaveState('error');
+        if (!silent) toast.error('Could not save your work. Try again.');
+        return;
+      }
+      dirtyRef.current = false;
+      setSaveState('saved');
+      if (!silent) toast.success('Work saved to your account');
+    },
+    [user, lessonId, language],
+  );
+
+  // Autosave after a pause in typing.
+  useEffect(() => {
+    if (loading || !user || !dirtyRef.current) return;
+    const id = setTimeout(() => persist(code), 1200);
+    return () => clearTimeout(id);
+  }, [code, loading, user, persist]);
+
+  const onChange = (value: string) => {
+    dirtyRef.current = true;
+    setSaveState('idle');
+    setCode(value);
+  };
 
   const runJs = () => {
     const lines: string[] = [];
@@ -103,7 +188,6 @@ export const CodePlayground = ({ lessonId, language, starterCode, hint }: Props)
       try {
         await pyodide.runPythonAsync(code);
       } catch (err) {
-        await pyodide.runPythonAsync('pass');
         setOutput(String((err as Error).message).split('\n').slice(-12).join('\n'));
         return;
       }
@@ -126,26 +210,52 @@ export const CodePlayground = ({ lessonId, language, starterCode, hint }: Props)
     } finally {
       setRunning(false);
     }
+    if (user && dirtyRef.current) persist(code);
   };
 
-  const reset = () => {
+  const reset = async () => {
+    dirtyRef.current = true;
     setCode(initial);
     setOutput('');
     localStorage.removeItem(storageKey);
+    await persist(initial);
   };
+
+  const saveLabel =
+    saveState === 'saving' ? 'Saving...' : saveState === 'saved' ? 'Saved' : saveState === 'error' ? 'Not saved' : 'Save';
 
   return (
     <div className="bg-card rounded-2xl border shadow-card overflow-hidden mb-8">
-      <div className="flex items-center justify-between gap-3 px-5 py-3 border-b bg-muted/40">
+      <div className="flex items-center justify-between gap-3 px-5 py-3 border-b bg-muted/40 flex-wrap">
         <div className="flex items-center gap-2">
           <Terminal className="w-4 h-4 text-primary" />
           <span className="font-semibold text-sm">Try it yourself</span>
           <span className="text-xs text-muted-foreground uppercase tracking-wide">{language}</span>
         </div>
         <div className="flex items-center gap-2">
+          {!user && (
+            <span className="hidden sm:flex items-center gap-1 text-xs text-muted-foreground">
+              <CloudOff className="w-3.5 h-3.5" /> Sign in to save
+            </span>
+          )}
           <Button variant="ghost" size="sm" onClick={reset} disabled={running}>
             <RotateCcw className="w-4 h-4" />
             Reset
+          </Button>
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => persist(code, false)}
+            disabled={saveState === 'saving' || !user}
+          >
+            {saveState === 'saving' ? (
+              <Loader2 className="w-4 h-4 animate-spin" />
+            ) : saveState === 'saved' ? (
+              <Check className="w-4 h-4" />
+            ) : (
+              <Save className="w-4 h-4" />
+            )}
+            {saveLabel}
           </Button>
           <Button size="sm" onClick={run} disabled={running}>
             {running ? <Loader2 className="w-4 h-4 animate-spin" /> : <Play className="w-4 h-4" />}
@@ -154,27 +264,23 @@ export const CodePlayground = ({ lessonId, language, starterCode, hint }: Props)
         </div>
       </div>
 
-      {hint && (
-        <p className="px-5 pt-4 text-sm text-muted-foreground">{hint}</p>
-      )}
+      {hint && <p className="px-5 pt-4 text-sm text-muted-foreground">{hint}</p>}
 
       <div className="p-5 space-y-4">
-        <textarea
-          value={code}
-          onChange={(e) => setCode(e.target.value)}
-          spellCheck={false}
-          rows={Math.min(24, Math.max(10, code.split('\n').length + 2))}
-          className="w-full font-mono text-sm leading-6 rounded-xl border bg-muted/50 p-4 outline-none focus:ring-2 focus:ring-primary/40 resize-y"
-        />
+        <div className="rounded-xl border overflow-hidden">
+          <CodeMirror
+            value={code}
+            height="320px"
+            theme={oneDark}
+            extensions={extensionsFor(language)}
+            onChange={onChange}
+            basicSetup={{ lineNumbers: true, highlightActiveLine: true, autocompletion: true, tabSize: 2 }}
+          />
+        </div>
 
         {language === 'html' ? (
           <div className="rounded-xl border overflow-hidden bg-background">
-            <iframe
-              ref={frameRef}
-              title="Preview"
-              sandbox="allow-scripts"
-              className="w-full h-64 bg-background"
-            />
+            <iframe ref={frameRef} title="Preview" sandbox="allow-scripts" className="w-full h-64 bg-background" />
           </div>
         ) : (
           <div className="rounded-xl border bg-muted/50 p-4 min-h-[6rem]">
