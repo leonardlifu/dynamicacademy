@@ -1,73 +1,106 @@
-# Welcome to your Lovable project
+# Dynamic Academy Platform
 
-## Project info
+Create and fully build a complete production‑ready online programming academy website named “Dynamic Tech Academy”. Purpose: enable an instructor (Leonard Lifu) to teach programming to beginners and intermediate students, manage courses, track student progress, and communicate professionally.
 
-**URL**: https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID
+CORE USERS
+• Admin / Instructor
+• Student
 
-## How can I edit this code?
+PAGES
+• Landing Page (hero, mission, learning paths, testimonials, pricing, FAQs)
+• About Academy
+• Courses
+• Student Dashboard
+• Admin Dashboard
+• Announcements
+• Pricing
+• Contact
 
-There are several ways of editing your application.
+AUTHENTICATION
+• Email + password signup/login
+• Role‑based access (admin vs student)
 
-**Use Lovable**
+COURSES (PRE‑FILLED)
+1) Programming Foundations (Free)
+   Modules:
+   – What Programming Is
+   – How Computers Think
+   – Algorithms & Flowcharts
+   – Introduction to HTML
+   – Introduction to CSS
+   – Introduction to JavaScript
+   Each module contains text lessons, examples, and quizzes.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and start prompting.
+2) Web Development Essentials (Paid structure)
+   – HTML Deep Dive
+   – CSS Layouts & Flexbox
+   – JavaScript Basics
+   – Mini Website Project
 
-Changes made via Lovable will be committed automatically to this repo.
+3) Python for Beginners (Paid structure)
+   – Python Syntax
+   – Variables & Data Types
+   – Control Flow
+   – Functions
+   – Console Projects
 
-**Use your preferred IDE**
+FEATURES
+• Course enrollment
+• Progress tracking (%)
+• Lesson completion
+• Quizzes with auto‑grading
+• Downloadable resources
+• Certificate placeholders
+• Announcements board
+• Student‑admin messaging
+• Admin analytics dashboard
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+DESIGN
+• Clean modern tech UI
+• Blue accent theme
+• Dark/Light mode toggle
+• Mobile‑first responsive design
+• Africa‑friendly performance
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+MONETIZATION
+• Free beginner course
+• Paid advanced courses (pricing page only)
 
-Follow these steps:
+DATA MODELS
+• User
+• Course
+• Module
+• Lesson
+• Enrollment
+• Quiz
+• Announcement
+
+DEPLOYMENT
+• Live production URL
+• Editable via visual editor
+• SEO‑friendly
+
+Goal: deliver a complete ready‑to‑use online tech academy that can immediately accept students and scale.
+
+This project was built with [Lovable](https://lovable.dev).
+
+**Live app**: https://dynamicacademy.lovable.app
+
+## Build with Lovable
+
+Continue developing this project in the [Lovable editor](https://lovable.dev/projects/f7fd067b-0678-45e5-ad73-d1ffaa879b8c).
+
+- **Ship faster**: describe what you want to build and Lovable handles the code.
+- **Stay in sync**: every change made in Lovable is committed straight to this repository.
+- **Full ownership**: this code is yours. Push to `main` on GitHub and your changes sync back into Lovable, ready for your next prompt.
+
+## Development
+
+Prefer working locally? You need Node.js and npm — [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating).
 
 ```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
-
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
-
-# Step 3: Install the necessary dependencies.
+git clone <this-repository-url>
+cd <repository-name>
 npm i
-
-# Step 4: Start the development server with auto-reloading and an instant preview.
 npm run dev
 ```
-
-**Edit a file directly in GitHub**
-
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
-
-**Use GitHub Codespaces**
-
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
-
-## What technologies are used for this project?
-
-This project is built with:
-
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
-
-## How can I deploy this project?
-
-Simply open [Lovable](https://lovable.dev/projects/REPLACE_WITH_PROJECT_ID) and click on Share -> Publish.
-
-## Can I connect a custom domain to my Lovable project?
-
-Yes, you can!
-
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/features/custom-domain#custom-domain)
