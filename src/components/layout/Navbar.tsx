@@ -140,12 +140,22 @@ export const Navbar = () => {
               ))}
               <div className="border-t my-2" />
               {user ? (
-                <Link to={isAdmin ? '/admin' : '/dashboard'} onClick={() => setIsOpen(false)}>
-                  <Button variant="outline" className="w-full justify-start">
-                    <LayoutDashboard className="w-4 h-4" />
-                    Dashboard
-                  </Button>
-                </Link>
+                <>
+                  {isAdmin && (
+                    <Link to="/admin" onClick={() => setIsOpen(false)}>
+                      <Button variant="hero" className="w-full justify-start">
+                        <ShieldCheck className="w-4 h-4" />
+                        Admin
+                      </Button>
+                    </Link>
+                  )}
+                  <Link to={isAdmin ? '/admin' : '/dashboard'} onClick={() => setIsOpen(false)}>
+                    <Button variant="outline" className="w-full justify-start">
+                      <LayoutDashboard className="w-4 h-4" />
+                      Dashboard
+                    </Button>
+                  </Link>
+                </>
               ) : (
                 <>
                   <Link to="/login" onClick={() => setIsOpen(false)}>
