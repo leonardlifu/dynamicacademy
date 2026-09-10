@@ -599,6 +599,77 @@ export type Database = {
       }
     }
     Functions: {
+      admin_course_stats: {
+        Args: never
+        Returns: {
+          avg_progress: number
+          avg_quiz_score: number
+          completed_count: number
+          course_id: string
+          enrollments_count: number
+          is_published: boolean
+          lessons_total: number
+          title: string
+        }[]
+      }
+      admin_list_enrollments: {
+        Args: never
+        Returns: {
+          completed_at: string
+          course_id: string
+          course_title: string
+          email: string
+          enrolled_at: string
+          enrollment_id: string
+          full_name: string
+          last_accessed_at: string
+          lessons_completed: number
+          progress_percentage: number
+          user_id: string
+        }[]
+      }
+      admin_list_quiz_results: {
+        Args: { p_user_id?: string }
+        Returns: {
+          attempt_id: string
+          attempted_at: string
+          course_title: string
+          email: string
+          full_name: string
+          lesson_title: string
+          passed: boolean
+          quiz_title: string
+          score: number
+          user_id: string
+        }[]
+      }
+      admin_list_students: {
+        Args: never
+        Returns: {
+          avg_quiz_score: number
+          certificates_count: number
+          email: string
+          enrollments_count: number
+          full_name: string
+          joined_at: string
+          last_active: string
+          lessons_completed: number
+          quiz_attempts_count: number
+          role: Database["public"]["Enums"]["app_role"]
+          user_id: string
+        }[]
+      }
+      admin_student_lesson_progress: {
+        Args: { p_user_id: string }
+        Returns: {
+          completed_at: string
+          course_title: string
+          is_completed: boolean
+          lesson_id: string
+          lesson_title: string
+          module_title: string
+        }[]
+      }
       get_user_role: {
         Args: { _user_id: string }
         Returns: Database["public"]["Enums"]["app_role"]
