@@ -1,7 +1,7 @@
 import { Link, useLocation } from 'react-router-dom';
 import { motion } from 'framer-motion';
 import { useState } from 'react';
-import { Menu, X, BookOpen, User, LogIn, LayoutDashboard, Moon, Sun } from 'lucide-react';
+import { Menu, X, BookOpen, User, LogIn, LayoutDashboard, Moon, Sun, ShieldCheck } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useAuth } from '@/contexts/AuthContext';
 
@@ -72,6 +72,14 @@ export const Navbar = () => {
 
             {user ? (
               <div className="hidden md:flex items-center gap-2">
+                {isAdmin && (
+                  <Link to="/admin">
+                    <Button variant="hero" size="sm">
+                      <ShieldCheck className="w-4 h-4" />
+                      Admin
+                    </Button>
+                  </Link>
+                )}
                 <Link to={isAdmin ? '/admin' : '/dashboard'}>
                   <Button variant="outline" size="sm">
                     <LayoutDashboard className="w-4 h-4" />
@@ -132,12 +140,22 @@ export const Navbar = () => {
               ))}
               <div className="border-t my-2" />
               {user ? (
-                <Link to={isAdmin ? '/admin' : '/dashboard'} onClick={() => setIsOpen(false)}>
-                  <Button variant="outline" className="w-full justify-start">
-                    <LayoutDashboard className="w-4 h-4" />
-                    Dashboard
-                  </Button>
-                </Link>
+                <>
+                  {isAdmin && (
+                    <Link to="/admin" onClick={() => setIsOpen(false)}>
+                      <Button variant="hero" className="w-full justify-start">
+                        <ShieldCheck className="w-4 h-4" />
+                        Admin
+                      </Button>
+                    </Link>
+                  )}
+                  <Link to={isAdmin ? '/admin' : '/dashboard'} onClick={() => setIsOpen(false)}>
+                    <Button variant="outline" className="w-full justify-start">
+                      <LayoutDashboard className="w-4 h-4" />
+                      Dashboard
+                    </Button>
+                  </Link>
+                </>
               ) : (
                 <>
                   <Link to="/login" onClick={() => setIsOpen(false)}>
